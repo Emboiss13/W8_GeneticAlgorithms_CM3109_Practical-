@@ -28,11 +28,24 @@ public class Algorithm {
         }
         // Loop over the population size and create new individuals with
         // crossover
-        for (int i = elitismOffset; i < pop.size(); i++) {
-            Individual indiv1 = rouletteWheelSelection(pop);
-            Individual indiv2 = rouletteWheelSelection(pop);
-            Individual newIndiv = crossover(indiv1, indiv2);
-            newPopulation.saveIndividual(i, newIndiv);
+        for (int i = elitismOffset; i < pop.size(); i += 2) {
+
+            // Select parents (choose method here)
+            Individual parent1 = rouletteWheelSelection(pop);
+            // Individual parent1 = stochasticUniversalSelection(pop);   // optional
+            Individual parent2 = rouletteWheelSelection(pop);
+            // Individual parent2 = stochasticUniversalSelection(pop);   // optional
+
+            // Get TWO offspring
+            Individual[] offspring = crossover(parent1, parent2);
+
+            // Store first child
+            newPopulation.saveIndividual(i, offspring[0]);
+
+            // Store second child if space allows
+            if (i + 1 < pop.size()) {
+                newPopulation.saveIndividual(i + 1, offspring[1]);
+            }
         }
 
         // Mutate population
@@ -44,19 +57,28 @@ public class Algorithm {
     }
 
     // Crossover individuals
-    private static Individual crossover(Individual indiv1, Individual indiv2) {
-        Individual newSol = new Individual();
-        // Loop through genes
-        for (int i = 0; i < indiv1.size(); i++) {
-            // Crossover
-            if (Math.random() <= uniformRate) {
-                newSol.setGene(i, indiv1.getGene(i));
+    // Single-point crossover producing TWO offspring — return first child
+   private static Individual[] crossover(Individual parent1, Individual parent2) {
+
+        Individual child1 = new Individual();
+        Individual child2 = new Individual();
+
+        // Choose random crossover point (1 .. length-1)
+        int crossoverPoint = (int) (Math.random() * (parent1.size() - 1)) + 1;
+
+        for (int i = 0; i < parent1.size(); i++) {
+            if (i < crossoverPoint) {
+                child1.setGene(i, parent1.getGene(i));
+                child2.setGene(i, parent2.getGene(i));
             } else {
-                newSol.setGene(i, indiv2.getGene(i));
+                child1.setGene(i, parent2.getGene(i));
+                child2.setGene(i, parent1.getGene(i));
             }
         }
-        return newSol;
+
+        return new Individual[]{ child1, child2 };
     }
+
 
     // Mutate an individual
     private static void mutate(Individual indiv) {
