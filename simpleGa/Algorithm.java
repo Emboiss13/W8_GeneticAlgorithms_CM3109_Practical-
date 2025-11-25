@@ -29,8 +29,8 @@ public class Algorithm {
         // Loop over the population size and create new individuals with
         // crossover
         for (int i = elitismOffset; i < pop.size(); i++) {
-            Individual indiv1 = tournamentSelection(pop);
-            Individual indiv2 = tournamentSelection(pop);
+            Individual indiv1 = rouletteWheelSelection(pop);
+            Individual indiv2 = rouletteWheelSelection(pop);
             Individual newIndiv = crossover(indiv1, indiv2);
             newPopulation.saveIndividual(i, newIndiv);
         }
@@ -71,16 +71,55 @@ public class Algorithm {
     }
 
     // Select individuals for crossover
-    private static Individual tournamentSelection(Population pop) {
-        // Create a tournament population
-        Population tournament = new Population(tournamentSize, false);
-        // For each place in the tournament get a random individual
-        for (int i = 0; i < tournamentSize; i++) {
-            int randomId = (int) (Math.random() * pop.size());
-            tournament.saveIndividual(i, pop.getIndividual(randomId));
+    // private static Individual tournamentSelection(Population pop) {
+    //     // Create a tournament population
+    //     Population tournament = new Population(tournamentSize, false);
+    //     // For each place in the tournament get a random individual
+    //     for (int i = 0; i < tournamentSize; i++) {
+    //         int randomId = (int) (Math.random() * pop.size());
+    //         tournament.saveIndividual(i, pop.getIndividual(randomId));
+    //     }
+    //     // Get the fittest
+    //     Individual fittest = tournament.getFittest();
+    //     return fittest;
+    // }
+
+    // This did not work correctly
+    // We are not properly iterating through the population to find the selected individual
+    // Instead, we were returning the same individual if the random number was less than total fitness
+    // private static Individual rouletteWheelSelection(Population pop) {
+    //     int totalFitness = 0;
+    //     for (int i = 0; i < pop.size(); i++) {
+    //         totalFitness += pop.getIndividual(i).getFitness();
+    //     }
+
+    //     double rand = Math.random() * totalFitness;
+
+    //     if (totalFitness >= rand) {
+    //         return pop.getIndividual(i);
+    //     }
+        
+    //     return pop.getIndividual(pop.size() - 1);
+    // }
+
+    // Roulette Wheel Selection
+    private static Individual rouletteWheelSelection(Population pop) {
+        int totalFitness = 0;
+        for (int i = 0; i < pop.size(); i++) {
+            totalFitness += pop.getIndividual(i).getFitness();
         }
-        // Get the fittest
-        Individual fittest = tournament.getFittest();
-        return fittest;
+
+        double rand = Math.random() * totalFitness;
+
+        double runningSum = 0;
+        for (int i = 0; i < pop.size(); i++) {
+            runningSum += pop.getIndividual(i).getFitness();
+            if (runningSum >= rand) {
+                return pop.getIndividual(i);
+            }
+        }
+
+        return pop.getIndividual(pop.size() - 1);
     }
+
 }
