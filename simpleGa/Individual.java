@@ -2,7 +2,7 @@ package simpleGa;
 
 public class Individual {
 
-    static int defaultGeneLength = 64;
+    static int defaultGeneLength = 10;
     private byte[] genes = new byte[defaultGeneLength];
     // Cache
     private int fitness = 0;

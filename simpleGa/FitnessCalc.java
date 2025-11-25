@@ -2,7 +2,7 @@ package simpleGa;
 
 public class FitnessCalc {
 
-    static byte[] solution = new byte[64];
+    static byte[] solution = new byte[10];
 
     /* Public methods */
     // Set a candidate solution as a byte array

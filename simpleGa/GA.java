@@ -5,7 +5,7 @@ public class GA {
     public static void main(String[] args) {
 
         // Set a candidate solution
-        FitnessCalc.setSolution("1111000000000000000000000000000000000000000000000000000000001111");
+        FitnessCalc.setSolution("1001001001");
 
         // Create an initial population
         Population myPop = new Population(50, true);
@@ -16,6 +16,7 @@ public class GA {
             generationCount++;
             System.out.println("Generation: " + generationCount + " Fittest: " + myPop.getFittest().getFitness());
             myPop = Algorithm.evolvePopulation(myPop);
+            System.out.println("Current generation: " + myPop.getFittest());
         }
         System.out.println("Solution found!");
         System.out.println("Generation: " + generationCount);
